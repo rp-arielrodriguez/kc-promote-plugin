@@ -65,6 +65,18 @@ Filter syntax: `entity_type/entity_name` comma-separated.
 Entity types: `clients`, `clientScopes`, `identityProviders`, `roles`, `components`,
 `authenticationFlows`, `requiredActions`, `groups`
 
+### count-users
+
+Count total, active, and disabled users via REST API:
+
+```bash
+python3 "$KC_PROMOTE_SCRIPT" count-users --env prod
+python3 "$KC_PROMOTE_SCRIPT" count-users --env dev
+python3 "$KC_PROMOTE_SCRIPT" count-users --env qa
+```
+
+Uses `GET /admin/realms/{realm}/users/count` with `?enabled=true` to split active vs disabled.
+
 ### snapshot (docker-based, for local KC only)
 
 ```bash

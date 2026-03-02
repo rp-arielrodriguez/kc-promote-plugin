@@ -1286,6 +1286,43 @@ def cmd_api_snapshot(args):
         print(output)
 
 
+def cmd_count_users(args):
+    """Count users in a realm via REST API."""
+    env_name = args.env.lower()
+    if env_name in ENVS:
+        env_cfg = ENVS[env_name]
+    else:
+        if not all([args.server, args.client_id, args.client_secret]):
+            print("For custom envs, provide --server, --client-id, --client-secret",
+                  file=sys.stderr)
+            sys.exit(1)
+        env_cfg = {
+            "server": args.server,
+            "realm": args.realm or "recarga",
+            "client_id": args.client_id,
+            "client_secret": args.client_secret,
+            "proxy": args.proxy,
+        }
+
+    print(f"Authenticating to {env_cfg['server']}...", file=sys.stderr)
+    token = api_get_token(env_cfg)
+
+    realm = env_cfg.get("realm", "recarga")
+    print(f"Counting users in realm '{realm}'...", file=sys.stderr)
+
+    total_count = api_request(env_cfg, token, "users/count") or 0
+    active_count = api_request(env_cfg, token, "users/count?enabled=true") or 0
+    disabled_count = total_count - active_count
+
+    print(f"\n  Realm: {realm}")
+    print(f"  Environment: {env_name}")
+    print(f"  Total Users: {total_count}")
+    print(f"  Active Users: {active_count}")
+    print(f"  Disabled Users: {disabled_count}")
+
+    return active_count
+
+
 def main():
     parser = argparse.ArgumentParser(
         description="Keycloak config promotion tool",
@@ -1329,6 +1366,15 @@ def main():
     p_api.add_argument("--client-secret", help="Client secret (for custom env)")
     p_api.add_argument("--proxy", help="SOCKS proxy URL (for custom env)")
 
+    # count-users
+    p_count = sub.add_parser("count-users", help="Count users in a realm")
+    p_count.add_argument("--env", required=True, help="Environment: dev|qa|prod|local or custom")
+    p_count.add_argument("--realm", default="recarga", help="Realm name")
+    p_count.add_argument("--server", help="KC server URL (for custom env)")
+    p_count.add_argument("--client-id", help="Client ID (for custom env)")
+    p_count.add_argument("--client-secret", help="Client secret (for custom env)")
+    p_count.add_argument("--proxy", help="SOCKS proxy URL (for custom env)")
+
     args = parser.parse_args()
 
     if args.command == "snapshot":
@@ -1339,6 +1385,8 @@ def main():
         cmd_apply(args)
     elif args.command == "api-snapshot":
         cmd_api_snapshot(args)
+    elif args.command == "count-users":
+        cmd_count_users(args)
 
 
 if __name__ == "__main__":

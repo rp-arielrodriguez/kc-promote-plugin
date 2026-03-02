@@ -17,6 +17,7 @@ Keycloak config promotion task.
 - `/kc-promote:kc-promote diff DEV PROD --filter clients/recarga` - compare specific client
 - `/kc-promote:kc-promote snapshot PROD` - take fresh PROD snapshot
 - `/kc-promote:kc-promote apply DEV->PROD clients/recarga,clients/service` - promote specific entities
+- `/kc-promote:kc-promote count-users PROD` - count active/disabled users
 - `/kc-promote:kc-promote status` - show what snapshots exist and their age
 
 ## Task
