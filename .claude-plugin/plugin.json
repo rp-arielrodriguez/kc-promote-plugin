@@ -1,0 +1,10 @@
+{
+  "name": "kc-promote",
+  "description": "Keycloak config promotion tool. Snapshot, diff, and apply realm configurations across environments (DEV, QA, PROD, local).",
+  "version": "1.0.0",
+  "author": {
+    "name": "Ariel Rodriguez"
+  },
+  "repository": "https://github.com/rp-arielrodriguez/kc-promote-plugin",
+  "license": "MIT"
+}
